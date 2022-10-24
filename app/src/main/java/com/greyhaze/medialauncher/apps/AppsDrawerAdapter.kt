@@ -5,11 +5,13 @@ import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.pm.PackageManager.NameNotFoundException
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.RecyclerView
 import com.greyhaze.medialauncher.R
 import java.io.File
@@ -35,9 +37,24 @@ data class AppsDrawerAdapter(val context: Context) : RecyclerView.Adapter<AppsDr
                         val app = AppInfo()
                         app.packageName = apk.packageName
                         try {
-                            val appInfo = pManager.getApplicationInfo(apk.packageName, 0)
-                            app.label = appInfo.loadLabel(pManager)
-                            app.icon = appInfo.loadIcon(pManager)
+                            when(path) {
+                                "audiobook.apk" -> {
+                                    app.label = "Audiobook"
+                                    app.icon = AppCompatResources.getDrawable(context, R.drawable.audiobook)
+                                }
+                                "library.apk" -> {
+                                    app.label = "Library"
+                                    app.icon = AppCompatResources.getDrawable(context, R.drawable.library)
+                                }
+                                "music.apk" -> {
+                                    app.label = "Music"
+                                    app.icon = AppCompatResources.getDrawable(context, R.drawable.music)
+                                }
+                                "podcast.apk" -> {
+                                    app.label = "Podcast"
+                                    app.icon = AppCompatResources.getDrawable(context, R.drawable.podcast)
+                                }
+                            }
                             it.add(app)
                         } catch (e: NameNotFoundException) {
 

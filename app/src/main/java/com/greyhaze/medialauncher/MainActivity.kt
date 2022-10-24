@@ -23,6 +23,13 @@ class MainActivity : AppCompatActivity() {
             .beginTransaction()
             .replace(R.id.container, HomeScreenFragment())
             .commit()
+        supportActionBar?.hide()
+        window.decorView.setBackgroundColor(resources.getColor(R.color.app_background, null))
+        window.navigationBarColor = resources.getColor(R.color.app_background, null)
+    }
+
+    override fun onBackPressed() {
+        // Do nothing.
     }
 
     private fun installAPK() {

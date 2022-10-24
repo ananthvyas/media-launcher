@@ -5,13 +5,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical"
+    android:background="@color/app_background"
     tools:context="com.greyhaze.medialauncher.MainActivity">
 
     <androidx.cardview.widget.CardView
-        app:cardBackgroundColor="#FFF"
+        app:cardBackgroundColor="@color/app_background"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
 
         <androidx.recyclerview.widget.RecyclerView
