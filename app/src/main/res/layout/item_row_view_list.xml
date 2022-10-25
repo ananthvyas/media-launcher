@@ -6,15 +6,6 @@
     android:layout_height="wrap_content"
     android:layout_margin="32dp">
 
-
-<!--    <LinearLayout-->
-<!--        android:clickable="false"-->
-<!--        android:layout_marginTop="16dp"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_marginStart="25dp"-->
-<!--        android:orientation="vertical"-->
-<!--        android:layout_height="wrap_content">-->
-
         <ImageView
             android:src="@mipmap/ic_launcher"
             android:id="@+id/app_icon"

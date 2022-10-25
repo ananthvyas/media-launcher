@@ -8,26 +8,22 @@ import android.content.Intent.ACTION_SCREEN_ON
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.media.AudioManager
-import android.media.AudioManager.OnAudioFocusChangeListener
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.os.PowerManager
 import android.os.SystemClock
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
-import androidx.core.content.getSystemService
 import com.greyhaze.medialauncher.apps.AppInfo
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import java.io.InputStream
 import java.util.concurrent.TimeUnit
 
 
-class MainActivity : AppCompatActivity(), OnAudioFocusChangeListener {
+class MainActivity : AppCompatActivity() {
     lateinit var mainHandler: Handler
     lateinit var audioManager: AudioManager
 
@@ -74,8 +70,8 @@ class MainActivity : AppCompatActivity(), OnAudioFocusChangeListener {
                 lastActive.let {
                     if (SystemClock.elapsedRealtime() - it >= TimeUnit.MINUTES.toMillis(30)) {
                         Log.i("MusicActiveCheckerService", "Music inactive, powering down")
-                        val i = Intent("com.android.internal.intent.action.REQUEST_SHUTDOWN")
-                        startActivity(i)
+//                        val i = Intent("com.android.internal.intent.action.REQUEST_SHUTDOWN")
+//                        startActivity(i)
                     }
                 }
             }
@@ -114,28 +110,25 @@ class MainActivity : AppCompatActivity(), OnAudioFocusChangeListener {
     }
 
     private fun prepareApk(assetName: String): File? {
-        val buffer = ByteArray(1024)
-        var ist: InputStream? = null
-        var fout: FileOutputStream? = null
-        val PATH: String? = applicationContext.getExternalFilesDir("Download")?.absolutePath
-        val file = PATH?.let { File(it) }
+        val externalPath: String? = applicationContext.getExternalFilesDir("Download")?.absolutePath
+        val file = externalPath?.let { File(it) }
         val outputFile = File(file, assetName)
         try {
-            ist = assets.open("apk/$assetName")
+            val ist = assets.open("apk/$assetName")
             if (outputFile.exists()) {
                 val info = applicationContext.packageManager.getPackageArchiveInfo(outputFile.path, 0)
                 info?.let { apk ->
                     val app = AppInfo()
                     app.packageName = apk.packageName
                     try {
-                        val appInfo = applicationContext.packageManager.getApplicationInfo(apk.packageName, 0)
+                        applicationContext.packageManager.getApplicationInfo(apk.packageName, 0)
                         return null
                     } catch (e: PackageManager.NameNotFoundException) {
 
                     }
                 }
             }
-            fout = FileOutputStream(outputFile)
+            val fout = FileOutputStream(outputFile)
             val buffer = ByteArray(1024)
             var len1: Int
             var total: Long = 0
@@ -149,13 +142,5 @@ class MainActivity : AppCompatActivity(), OnAudioFocusChangeListener {
             throw e
         }
         return outputFile
-    }
-
-    private fun uriFromFile(context: Context, file: File): Uri? {
-        return FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", file)
-    }
-
-    override fun onAudioFocusChange(p0: Int) {
-        Log.d("AudioManager", "Inside on audio focus change")
     }
 }
