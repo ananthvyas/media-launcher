@@ -2,10 +2,8 @@ package com.greyhaze.medialauncher.apps
 
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.pm.PackageManager.NameNotFoundException
-import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +13,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.RecyclerView
 import com.greyhaze.medialauncher.R
 import java.io.File
+import java.util.*
 
 
 data class AppsDrawerAdapter(val context: Context) : RecyclerView.Adapter<AppsDrawerAdapter.ViewHolder>() {
@@ -36,32 +35,36 @@ data class AppsDrawerAdapter(val context: Context) : RecyclerView.Adapter<AppsDr
                     info?.let { apk ->
                         val app = AppInfo()
                         app.packageName = apk.packageName
-                        try {
-                            when(path) {
-                                "audiobook.apk" -> {
-                                    app.label = "Audiobook"
-                                    app.icon = AppCompatResources.getDrawable(context, R.drawable.audiobook)
-                                }
-                                "library.apk" -> {
-                                    app.label = "Library"
-                                    app.icon = AppCompatResources.getDrawable(context, R.drawable.library)
-                                }
-                                "music.apk" -> {
-                                    app.label = "Music"
-                                    app.icon = AppCompatResources.getDrawable(context, R.drawable.music)
-                                }
-                                "podcast.apk" -> {
-                                    app.label = "Podcast"
-                                    app.icon = AppCompatResources.getDrawable(context, R.drawable.podcast)
-                                }
+                        when(path) {
+                            "audiobook.apk" -> {
+                                app.label = "Audiobook"
+                                app.icon = AppCompatResources.getDrawable(context, R.drawable.audiobook)
+                                app.priority = 1
                             }
-                            it.add(app)
-                        } catch (e: NameNotFoundException) {
-
+                            "library.apk" -> {
+                                app.label = "Library"
+                                app.icon = AppCompatResources.getDrawable(context, R.drawable.library)
+                                app.priority = 2
+                            }
+                            "music.apk" -> {
+                                app.label = "Music"
+                                app.icon = AppCompatResources.getDrawable(context, R.drawable.music)
+                                app.priority = 3
+                            }
+                            "podcast.apk" -> {
+                                app.label = "Podcast"
+                                app.icon = AppCompatResources.getDrawable(context, R.drawable.podcast)
+                                app.priority = 4
+                            }
                         }
+                        it.add(app)
                     }
                 }
             }
+            val comparator: Comparator<AppInfo> = Comparator<AppInfo> { h1, h2 ->
+                h1.priority.compareTo(h2.priority)
+            }
+            it.sortWith(comparator)
         }
     }
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

@@ -70,8 +70,8 @@ class MainActivity : AppCompatActivity() {
                 lastActive.let {
                     if (SystemClock.elapsedRealtime() - it >= TimeUnit.MINUTES.toMillis(30)) {
                         Log.i("MusicActiveCheckerService", "Music inactive, powering down")
-//                        val i = Intent("com.android.internal.intent.action.REQUEST_SHUTDOWN")
-//                        startActivity(i)
+                        val i = Intent("com.android.internal.intent.action.REQUEST_SHUTDOWN")
+                        startActivity(i)
                     }
                 }
             }
