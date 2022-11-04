@@ -3,7 +3,6 @@ package com.greyhaze.medialauncher.apps
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.pm.PackageManager.NameNotFoundException
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -57,7 +56,9 @@ data class AppsDrawerAdapter(val context: Context) : RecyclerView.Adapter<AppsDr
                                 app.priority = 4
                             }
                         }
-                        it.add(app)
+                        app.label?.let { _ ->
+                            it.add(app)
+                        }
                     }
                 }
             }

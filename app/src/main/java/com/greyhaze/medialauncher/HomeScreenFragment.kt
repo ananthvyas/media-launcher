@@ -1,9 +1,12 @@
 package com.greyhaze.medialauncher
 
+import android.content.Intent
 import android.os.Bundle
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -32,5 +35,8 @@ class HomeScreenFragment : Fragment() {
         layoutManager = GridLayoutManager(context, 2)
         recyclerView?.layoutManager = layoutManager
         recyclerView?.adapter = adapter
+        view.findViewById<ImageView>(R.id.settings_button).setOnClickListener {
+            context?.startActivity(Intent(Settings.ACTION_SETTINGS))
+        }
     }
 }
