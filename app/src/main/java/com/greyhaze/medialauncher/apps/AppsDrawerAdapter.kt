@@ -27,8 +27,8 @@ data class AppsDrawerAdapter(val context: Context) : RecyclerView.Adapter<AppsDr
             val paths = context.assets.list("apk")
             if (paths != null) {
                 for (path in paths) {
-                    val PATH: String? = context.getExternalFilesDir("Download")?.absolutePath
-                    val file = PATH?.let { pth -> File(pth) }
+                    val absolutePath: String? = context.getExternalFilesDir("Download")?.absolutePath
+                    val file = absolutePath?.let { pth -> File(pth) }
                     val outputFile = File(file, path)
                     val info = pManager.getPackageArchiveInfo(outputFile.path, 0)
                     info?.let { apk ->

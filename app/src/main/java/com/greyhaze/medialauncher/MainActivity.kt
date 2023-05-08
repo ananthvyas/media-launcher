@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
             override fun onReceive(contxt: Context?, intent: Intent?) {
                 when (intent?.action) {
                     ACTION_SCREEN_OFF, ACTION_SCREEN_ON -> {
-                        Log.i("MusicActiveCheckerService", "Screen is on/off now")
+                        Log.i("MediaLauncher", "Screen is on/off now")
                         lastActive = SystemClock.elapsedRealtime()
                     }
                 }
@@ -64,14 +64,14 @@ class MainActivity : AppCompatActivity() {
     private val updateTextTask = object : Runnable {
         override fun run() {
             if (audioManager.isMusicActive) {
-                Log.i("MusicActiveCheckerService", "Music active, resetting clock")
+                Log.i("MediaLauncher", "Device in use, resetting clock")
                 lastActive = SystemClock.elapsedRealtime()
             } else {
                 lastActive.let {
-                    if (SystemClock.elapsedRealtime() - it >= TimeUnit.MINUTES.toMillis(20)) {
-                        Log.i("MusicActiveCheckerService", "Music inactive, powering down")
-//                        val i = Intent("com.android.internal.intent.action.REQUEST_SHUTDOWN")
-//                        startActivity(i)
+                    if (SystemClock.elapsedRealtime() - it >= TimeUnit.MINUTES.toMillis(90)) {
+                        Log.i("MediaLauncher", "Device inactive, powering down")
+                        val i = Intent("com.android.internal.intent.action.REQUEST_SHUTDOWN")
+                        startActivity(i)
                     }
                 }
             }
