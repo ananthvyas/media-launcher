@@ -8,6 +8,7 @@
     android:background="@color/app_background"
     tools:context="com.greyhaze.medialauncher.MainActivity">
     <LinearLayout
+        android:id="@+id/top_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -37,4 +38,172 @@
             android:background="@android:color/transparent">
         </androidx.recyclerview.widget.RecyclerView>
     </androidx.cardview.widget.CardView>
+
+    <FrameLayout
+        android:id="@+id/bottom_overlay_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/permission_prompt_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/now_playing_background">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="12dp">
+
+                <ImageView
+                    android:id="@+id/permission_icon"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_music_note"
+                    android:contentDescription="Music Note" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/permission_icon"
+                    android:layout_toStartOf="@+id/btn_dismiss_permission"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_centerVertical="true"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Enable Now Playing Overlay"
+                        android:textStyle="bold"
+                        android:textSize="14sp"
+                        android:textColor="@color/app_text_color" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tap to grant notification access"
+                        android:textSize="12sp"
+                        android:textColor="@color/now_playing_subtext" />
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/btn_dismiss_permission"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:padding="4dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:src="@android:drawable/ic_menu_close_clear_cancel"
+                    android:contentDescription="Dismiss" />
+            </RelativeLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/now_playing_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/now_playing_background">
+
+            <LinearLayout
+                android:id="@+id/now_playing_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="8dp">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="@android:color/transparent">
+
+                    <ImageView
+                        android:id="@+id/now_playing_art"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_music_note"
+                        android:contentDescription="Album Art" />
+                </androidx.cardview.widget.CardView>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginEnd="8dp">
+
+                    <TextView
+                        android:id="@+id/now_playing_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:textSize="14sp"
+                        android:singleLine="true"
+                        android:ellipsize="marquee"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:scrollHorizontally="true"
+                        android:textColor="@color/app_text_color"
+                        tools:text="Song Title" />
+
+                    <TextView
+                        android:id="@+id/now_playing_artist"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:singleLine="true"
+                        android:ellipsize="end"
+                        android:textColor="@color/now_playing_subtext"
+                        tools:text="Artist Name" />
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/btn_now_playing_prev"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:padding="6dp"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_skip_previous"
+                    android:contentDescription="Previous track" />
+
+                <ImageView
+                    android:id="@+id/btn_now_playing_play_pause"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:padding="6dp"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_play_arrow"
+                    android:contentDescription="Play/Pause" />
+
+                <ImageView
+                    android:id="@+id/btn_now_playing_next"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:padding="6dp"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_skip_next"
+                    android:contentDescription="Next track" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+    </FrameLayout>
 </RelativeLayout>

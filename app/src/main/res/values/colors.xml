@@ -9,4 +9,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="app_background">#FFFFFFFF</color>
     <color name="app_text_color">@color/black</color>
+    <color name="now_playing_background">#F2F2F5</color>
+    <color name="now_playing_subtext">#666666</color>
 </resources>

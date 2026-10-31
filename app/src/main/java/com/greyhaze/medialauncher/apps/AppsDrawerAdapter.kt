@@ -96,10 +96,15 @@ data class AppsDrawerAdapter(val context: Context) : RecyclerView.Adapter<AppsDr
 
             holder.textView.text = appLabel
             holder.img.setImageDrawable(appIcon)
-            holder.img.setOnClickListener {
+            val launchApp = View.OnClickListener {
                 val intent = context.packageManager.getLaunchIntentForPackage(appPackage)
-                context.startActivity(intent)
+                if (intent != null) {
+                    context.startActivity(intent)
+                }
             }
+            holder.img.setOnClickListener(launchApp)
+            holder.textView.setOnClickListener(launchApp)
+            holder.itemView.setOnClickListener(launchApp)
         }
     }
 
