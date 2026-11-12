@@ -24,11 +24,6 @@ import java.util.concurrent.TimeUnit
 
 
 class MainActivity : AppCompatActivity() {
-    lateinit var mainHandler: Handler
-    lateinit var audioManager: AudioManager
-
-    var lastActive: Long = SystemClock.elapsedRealtime()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installAPK()
@@ -40,44 +35,8 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.hide()
         window.decorView.setBackgroundColor(resources.getColor(R.color.app_background, null))
         window.navigationBarColor = resources.getColor(R.color.app_background, null)
-        audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
-        mainHandler = Handler(Looper.getMainLooper())
-        mainHandler.post(updateTextTask)
-        registerScreenEventReceiver()
     }
 
-    private fun registerScreenEventReceiver() {
-        val broadCastReceiver = object : BroadcastReceiver() {
-            override fun onReceive(contxt: Context?, intent: Intent?) {
-                when (intent?.action) {
-                    ACTION_SCREEN_OFF, ACTION_SCREEN_ON -> {
-                        Log.i("MediaLauncher", "Screen is on/off now")
-                        lastActive = SystemClock.elapsedRealtime()
-                    }
-                }
-            }
-        }
-        this.registerReceiver(broadCastReceiver, IntentFilter(ACTION_SCREEN_OFF))
-        this.registerReceiver(broadCastReceiver, IntentFilter(ACTION_SCREEN_ON))
-    }
-
-    private val updateTextTask = object : Runnable {
-        override fun run() {
-            if (audioManager.isMusicActive) {
-                Log.i("MediaLauncher", "Device in use, resetting clock")
-                lastActive = SystemClock.elapsedRealtime()
-            } else {
-                lastActive.let {
-                    if (SystemClock.elapsedRealtime() - it >= TimeUnit.MINUTES.toMillis(90)) {
-                        Log.i("MediaLauncher", "Device inactive, powering down")
-                        val i = Intent("com.android.internal.intent.action.REQUEST_SHUTDOWN")
-                        startActivity(i)
-                    }
-                }
-            }
-            mainHandler.postDelayed(this, 15000)
-        }
-    }
     override fun onBackPressed() {
         // Do nothing.
     }
