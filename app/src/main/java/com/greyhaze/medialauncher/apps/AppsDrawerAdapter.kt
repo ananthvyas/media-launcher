@@ -1,7 +1,6 @@
 package com.greyhaze.medialauncher.apps
 
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.view.LayoutInflater
 import android.view.View
@@ -12,70 +11,78 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.RecyclerView
 import com.greyhaze.medialauncher.R
 import java.io.File
-import java.util.*
 
+class AppsDrawerAdapter(
+    val context: Context,
+    private val onTileSelected: (String) -> Unit
+) : RecyclerView.Adapter<AppsDrawerAdapter.ViewHolder>() {
 
-data class AppsDrawerAdapter(val context: Context) : RecyclerView.Adapter<AppsDrawerAdapter.ViewHolder>() {
-    private var appsList: MutableList<AppInfo>? = null
+    companion object {
+        const val TILE_AUDIOBOOK = "native://audiobook"
+        const val TILE_MUSIC = "native://music"
+        const val TILE_PODCAST = "native://podcast"
+    }
+
+    private val appsList: MutableList<AppInfo> = mutableListOf()
+
     init {
         val pManager: PackageManager = context.packageManager
-        appsList = mutableListOf()
-        appsList?.let {
-            val i = Intent(Intent.ACTION_MAIN, null)
-            i.addCategory(Intent.CATEGORY_LAUNCHER)
 
-            val paths = context.assets.list("apk")
-            if (paths != null) {
-                for (path in paths) {
-                    val absolutePath: String? = context.getExternalFilesDir("Download")?.absolutePath
-                    val file = absolutePath?.let { pth -> File(pth) }
-                    val outputFile = File(file, path)
-                    val info = pManager.getPackageArchiveInfo(outputFile.path, 0)
-                    info?.let { apk ->
-                        val app = AppInfo()
-                        app.packageName = apk.packageName
-                        when(path) {
-                            "audiobook.apk" -> {
-                                app.label = "Audiobook"
-                                app.icon = AppCompatResources.getDrawable(context, R.drawable.audiobook)
-                                app.priority = 1
-                            }
-                            "library.apk" -> {
-                                app.label = "Library"
-                                app.icon = AppCompatResources.getDrawable(context, R.drawable.library)
-                                app.priority = 2
-                            }
-                            "music.apk" -> {
-                                app.label = "Music"
-                                app.icon = AppCompatResources.getDrawable(context, R.drawable.music)
-                                app.priority = 3
-                            }
-                            "podcast.apk" -> {
-                                app.label = "Podcast"
-                                app.icon = AppCompatResources.getDrawable(context, R.drawable.podcast)
-                                app.priority = 4
-                            }
-                        }
-                        app.label?.let { _ ->
-                            it.add(app)
-                        }
-                    }
-                }
+        // 1. Native Audiobook Tile
+        appsList.add(
+            AppInfo().apply {
+                label = "Audiobook"
+                packageName = TILE_AUDIOBOOK
+                icon = AppCompatResources.getDrawable(context, R.drawable.audiobook)
+                priority = 1
             }
-            val comparator: Comparator<AppInfo> = Comparator<AppInfo> { h1, h2 ->
-                h1.priority.compareTo(h2.priority)
+        )
+
+        // 2. External Library Tile (from assets/apk/library.apk if present)
+        var libraryPkg: String? = null
+        val absolutePath: String? = context.getExternalFilesDir("Download")?.absolutePath
+        if (absolutePath != null) {
+            val outputFile = File(File(absolutePath), "library.apk")
+            if (outputFile.exists()) {
+                val info = pManager.getPackageArchiveInfo(outputFile.path, 0)
+                libraryPkg = info?.packageName
             }
-            it.sortWith(comparator)
         }
+        appsList.add(
+            AppInfo().apply {
+                label = "Library"
+                packageName = libraryPkg ?: "org.Onleihe"
+                icon = AppCompatResources.getDrawable(context, R.drawable.library)
+                priority = 2
+            }
+        )
+
+        // 3. Native Music Tile
+        appsList.add(
+            AppInfo().apply {
+                label = "Music"
+                packageName = TILE_MUSIC
+                icon = AppCompatResources.getDrawable(context, R.drawable.music)
+                priority = 3
+            }
+        )
+
+        // 4. Native Podcast Tile
+        appsList.add(
+            AppInfo().apply {
+                label = "Podcast"
+                packageName = TILE_PODCAST
+                icon = AppCompatResources.getDrawable(context, R.drawable.podcast)
+                priority = 4
+            }
+        )
+
+        appsList.sortBy { it.priority }
     }
+
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var textView: TextView
-        var img: ImageView
-        init {
-            //Finds the views from our row.xml
-            textView = itemView.findViewById(R.id.tv_app_name)
-            img = itemView.findViewById(R.id.app_icon)
-        }
+        var textView: TextView = itemView.findViewById(R.id.tv_app_name)
+        var img: ImageView = itemView.findViewById(R.id.app_icon)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -84,31 +91,27 @@ data class AppsDrawerAdapter(val context: Context) : RecyclerView.Adapter<AppsDr
             parent,
             false
         )
-
         return ViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        appsList?.let {
-            val appLabel = it[position].label.toString()
-            val appPackage = it[position].packageName.toString()
-            val appIcon = it[position].icon
+        val item = appsList[position]
+        val appLabel = item.label.toString()
+        val target = item.packageName.toString()
+        val appIcon = item.icon
 
-            holder.textView.text = appLabel
-            holder.img.setImageDrawable(appIcon)
-            val launchApp = View.OnClickListener {
-                val intent = context.packageManager.getLaunchIntentForPackage(appPackage)
-                if (intent != null) {
-                    context.startActivity(intent)
-                }
-            }
-            holder.img.setOnClickListener(launchApp)
-            holder.textView.setOnClickListener(launchApp)
-            holder.itemView.setOnClickListener(launchApp)
+        holder.textView.text = appLabel
+        holder.img.setImageDrawable(appIcon)
+
+        val clickListener = View.OnClickListener {
+            onTileSelected(target)
         }
+        holder.img.setOnClickListener(clickListener)
+        holder.textView.setOnClickListener(clickListener)
+        holder.itemView.setOnClickListener(clickListener)
     }
 
     override fun getItemCount(): Int {
-        return appsList?.size ?: 0
+        return appsList.size
     }
 }
